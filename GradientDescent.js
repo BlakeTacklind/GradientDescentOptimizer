@@ -6,7 +6,10 @@ class GradientDecsent{
 
 		this.iterations = iterations || 1000;
 
-		
+		this.ValueFunction = ValueFunction;
+
+		this.Values = Values;
+
 	}
 
 	optimize(initialPoint){

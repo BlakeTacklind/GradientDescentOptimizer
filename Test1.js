@@ -6,14 +6,6 @@ TestObject = {
 	D: 0
 }
 
-var Values = [
-	{name: "P", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 1},
-	{name: "I", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 0},
-	{name: "D", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 0},
-];
-
-var Tested = 0;
-
 ValueFunction = function (values){
 	TestObject.P = values[0];
 	TestObject.I = values[1];
@@ -23,6 +15,15 @@ ValueFunction = function (values){
 
 	return Math.pow(TestObject.P-600, 2) + Math.pow(TestObject.I-10, 2) + Math.pow(TestObject.D-10000, 2);
 }
+
+
+var Values = [
+	{name: "P", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 8},
+	{name: "I", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 0},
+	{name: "D", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 0},
+];
+
+var Tested = 0;
 
 LearningRate = 0.001;
 

@@ -4,7 +4,7 @@
   "description": "Optimizites a value function using gradient decent",
   "main": "GradientDescent.js",
   "scripts": {
-    "test": "node Test.js"
+    "test": "node Test1.js"
   },
   "author": "Blake Tacklind",
   "license": "MIT"
