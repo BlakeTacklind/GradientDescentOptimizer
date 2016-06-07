@@ -1,0 +1,11 @@
+{
+  "name": "gradient_descent_optimizater",
+  "version": "0.0.0",
+  "description": "Optimizites a value function using gradient decent",
+  "main": "GradientDescent.js",
+  "scripts": {
+    "test": "node Test.js"
+  },
+  "author": "Blake Tacklind",
+  "license": "MIT"
+}
