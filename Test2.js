@@ -18,6 +18,6 @@ ValueFunction = function(values){
 
 }
 
-var g = new gd(ValueFunction, Values, endCondition);
+var g = new gd(ValueFunction, Values, {endCondition});
 
 console.log(g.optimize());

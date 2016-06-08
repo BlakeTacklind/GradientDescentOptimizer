@@ -30,7 +30,7 @@ LearningRate = 0.001;
 //Should end be defined by a number of iterations?
 iterations = 1000;
 
-var g = new gd(ValueFunction, Values, iterations, LearningRate);
+var g = new gd(ValueFunction, Values, {iterations, LearningRate});
 
 console.log(g.optimize(), Tested);
 

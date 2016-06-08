@@ -1,10 +1,11 @@
 "use strict";
 
 class GradientDecsent{
-	constructor(ValueFunction, Values, iterations, LearningRate){
-		this.alpha = LearningRate || 0.001;
+	constructor(ValueFunction, Values, options){
 
-		this.iterations = iterations || 1000;
+		this.alpha = options['LearningRate'] || 0.001;
+
+		this.iterations = options['iterations'];
 
 		this.ValueFunction = ValueFunction;
 
@@ -34,7 +35,6 @@ class GradientDecsent{
 			}
 		}
 
-		console.log(Values);
 		return Values;
 	}
 
