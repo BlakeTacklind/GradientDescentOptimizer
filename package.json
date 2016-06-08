@@ -7,5 +7,8 @@
     "test": "node Test1.js"
   },
   "author": "Blake Tacklind",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "gaussian": "^1.1.0"
+  }
 }
