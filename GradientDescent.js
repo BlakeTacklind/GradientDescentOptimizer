@@ -6,6 +6,7 @@ class GradientDecsent{
 		this.alpha = options['LearningRate'] || 0.001;
 
 		this.iterations = options['iterations'];
+		this.endCondition = options['endCondition'];
 
 		this.ValueFunction = ValueFunction;
 
@@ -41,7 +42,28 @@ class GradientDecsent{
 	optimize(initialPoint){
 		initialPoint = initialPoint || this.getInitials();
 
-		
+		this.onInteration = 1;
+		this.onValues = initialPoint;
+
+		this.lastValue = this.ValueFunction(this.onValues);
+
+		while(!this.endConditionMet()){
+			this.onValues = this.NextPoint();
+
+			this.lastValue = this.ValueFunction(this.onValues);
+
+			this.onInteration++;
+		}
+	}
+
+	endConditionMet(){
+		if(typeof(this.iterations) === "number") return this.onInteration >= this.iterations;
+		if(typeof(this.endCondition) === "function") return this.endCondition(this.lastValue, this.iterations, this.onValues);
+		return true;
+	}
+
+	NextPoint(){
+		return this.onValues;
 	}
 
 	getInitials(){
