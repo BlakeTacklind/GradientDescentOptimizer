@@ -5,6 +5,8 @@ module.exports = {
 		if (center.length != variables) return;
 		if (width.length != variables) return;
 
+		vertshift = vertshift || 0;
+
 		return function(values){
 			if (values.length != variables) return NaN;
 
@@ -18,7 +20,8 @@ module.exports = {
 		}
 	},
 
-	Noise: function(mean, variance, range){
+	Noise: function(variance, mean, range){
+		mean = mean || 0;
 		var dist = gaussian(mean, variance);
 		console.log(typeof(range));
 		if (typeof(range) == "array"){

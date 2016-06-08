@@ -41,19 +41,24 @@ class GradientDecsent{
 
 	optimize(initialPoint){
 		initialPoint = initialPoint || this.getInitials();
+		this.tried = [];
 
 		this.onInteration = 1;
 		this.onValues = initialPoint;
 
 		this.lastValue = this.ValueFunction(this.onValues);
+		this.tried[0] = {values: this.onValues, value: this.lastValue};
 
 		while(!this.endConditionMet()){
 			this.onValues = this.NextPoint();
 
 			this.lastValue = this.ValueFunction(this.onValues);
+			this.tried[iterations] = {values: this.onValues, value: this.lastValue};
 
 			this.onInteration++;
 		}
+
+
 	}
 
 	endConditionMet(){
@@ -63,6 +68,16 @@ class GradientDecsent{
 	}
 
 	NextPoint(){
+		//Not enough for a gradient so twittle values
+		if(this.tried.length <= this.Values.length){
+
+		}
+
+		//otherwise shift value with gradient
+		//use most recent value mostly and slowly phase out previous values
+
+
+		//place holder
 		return this.onValues;
 	}
 
