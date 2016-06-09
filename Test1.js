@@ -18,9 +18,9 @@ ValueFunction = function (values){
 
 
 var Values = [
-	{name: "P", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 8},
-	{name: "I", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 0},
-	{name: "D", type: "Integer", lowerBound: 0, upperBound: 65535, Initial: 0},
+	{name: "P", type: "Integer", lowerBound: 0, upperBound: 255, Initial: 8},
+	{name: "I", type: "Integer", lowerBound: 0, upperBound: 255, Initial: 0},
+	{name: "D", type: "Integer", lowerBound: 0, upperBound: 255, Initial: 0},
 ];
 
 var Tested = 0;
