@@ -88,7 +88,6 @@ class GradientDecsent{
 
 		//Not enough for a gradient so twittle values
 		if(this.tried.length <= this.Values.length){
-			// console.log(valueCpy);
 
 			//Find lowest value element in list
 			valueCpy = this.getSmallest()['values'];

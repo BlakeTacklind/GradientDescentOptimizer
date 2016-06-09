@@ -13,7 +13,7 @@ ValueFunction = function (values){
 
 	Tested++;
 
-	return Math.pow(TestObject.P-600, 2) + Math.pow(TestObject.I-10, 2) + Math.pow(TestObject.D-10000, 2);
+	return Math.pow(TestObject.P-200, 2) + Math.pow(TestObject.I-100, 2) + Math.pow(TestObject.D-60, 2);
 }
 
 
