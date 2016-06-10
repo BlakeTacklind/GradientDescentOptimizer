@@ -17,9 +17,7 @@ class GradientDecsent{
 		this.scanArea = this.Values.length;
 
 		//initialize gradient
-		this.gradient = [];
-		for(var i = 0; i < this.Values.length; i++)
-			this.gradient.push(0);
+		this.gradient = undefined;
 		
 		this.calculatedGradient = false;
 
@@ -89,35 +87,96 @@ class GradientDecsent{
 
 	NextPoint(){
 		var currValue;
-		//Not enough for a gradient so twittle values
-		if(this.scanArea != 0){
+		//Not enough points for a gradient so twittle values
+		if(this.Values.length >= this.tried.length){
 
-			currValue = this.findSmallest(this.Values.length - this.scanArea)['values'];
+			currValue = this.tried[0]['values'];
 
 			currValue[this.tried.length - 1] += this.Values[this.tried.length - 1].Step;
 
-			this.gradient[this.Values.length - this.scanArea] = currValue[this.tried.length - 1].value
+			return this.clampValues(currValue);
+		}
+		//calculate a initial gradient
+		else if(this.Values.length + 1 == this.tried.length){
+			var Delta = [];
 
-			this.scanArea--;
-
-			if(this.scanArea == 0){
-				//calculate a new gradient
-
-
+			// console.log(this.tried)
+			//get Delta
+			for (var i = 0; i < this.Values.length; i++){
+				Delta.push(this.tried[0].value - this.tried[i+1].value);
 			}
+
+
+			var max = Delta.reduce((prev, curr)=>{
+				if (Math.abs(prev) > Math.abs(curr)){
+					return prev;
+				}
+
+				return curr;
+			});
+
+			this.gradient = Delta.map((val, index)=>{
+				var delta = val / Math.abs(max) * this.Values[index].Step;
+				if (this.Values[index].type == "Integer")
+					return Math.round(delta);
+				return delta;
+			});
+
+
+
+			// console.log(this.gradient)
+			return this.clampValues(this.addGradient(this.tried[0].values));
 		}
-		else if(this.tried[this.tried.length - 1] > this.tried[this.tried.length - 2]){
-			this.scanArea = this.Values.length;
-			this.calculatedGradient = false;
+
+
+		//work on new gradient
+		if(!this.gradient){
+			currValue = this.tried[this.tried.length - 1].values;
 		}
+		//need to find a new gradient (hit an upslope)
+		else if(this.tried[this.tried.length - 1].value > this.tried[this.tried.length - 2].value){
+			console.log(this.tried[this.tried.length - 1]);
+			this.gradient = undefined;
+			this.twittleFor = this.Values.length - 1;
+
+			
+
+			currValue = this.tried[this.tried.length - 1].values;
+
+
+		}
+		//we have a feasable gradient
 		else{
-			//go in gradient direction
-			currValue = this.tried[this.tried.length - 1]['values'] + this.gradient * this.alpha;
+			currValue = this.addGradient(this.tried[this.tried.length - 1].values);
+			console.log(currValue);
+		}
 
+		return this.clampValues(currValue);
+	}
+
+	addGradient(values){
+		return values.map((val, i)=>{
+			return val + this.gradient[i];
+		})
+	}
+
+	clampValues(values){
+		for (var i = 0; i < values.length; i++){
+
+			if(this.Values[i].type == "Integer"){
+				values[i] = Math.round(values[i]);
+			}
+
+			if(values[i] > this.Values[i].upperBound){
+				values[i] = this.Values[i].upperBound;
+			}
+			else if(values[i] < this.Values[i].lowerBound){
+				values[i] = this.Values[i].lowerBound;
+			}
 
 		}
 
-		return currValue;
+		return values;
 	}
 
 	findSmallest(ofLast){
