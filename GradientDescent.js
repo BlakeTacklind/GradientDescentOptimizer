@@ -3,7 +3,7 @@
 class GradientDecsent{
 	constructor(ValueFunction, Values, options){
 
-		this.alpha = options['LearningRate'] || 0.001;
+		this.alpha = options['LearningRate'] || 1;
 
 		this.iterations = options['iterations'];
 		this.endCondition = options['endCondition'];
@@ -11,6 +11,17 @@ class GradientDecsent{
 		this.ValueFunction = ValueFunction;
 
 		this.Values = this.makeValuesValid(Values);
+
+		this.phaseOutRate = options['phaseOutRate'] || 0.5;
+
+		this.scanArea = this.Values.length;
+
+		//initialize gradient
+		this.gradient = [];
+		for(var i = 0; i < this.Values.length; i++)
+			this.gradient.push(0);
+		
+		this.calculatedGradient = false;
 
 	}
 
@@ -22,27 +33,22 @@ class GradientDecsent{
 			}
 
 			if(typeof(Values[i]) === "object"){
-
 				Values[i]['name'] = Values[i]['name'] || "Variable "+(i+1);
-
 				Values[i]['type'] = Values[i]['type'] || "Real";
-				
 				if(typeof(Values[i]['lowerBound']) !== 'number') Values[i]['lowerBound'] = NaN;
 				if(typeof(Values[i]['upperBound']) !== 'number') Values[i]['upperBound'] = NaN;
-
-				var init = (Values[i]['upperBound'] + Values[i]['lowerBound'])/2;
+				var init = (Values[i]['upperBound'] + Values[i]['lowerBound'])/2
 				if (Values[i]['type'] == 'Integer') init = Math.round(init);
 				if(typeof(Values[i]['Initial']) !== 'number') Values[i]['Initial'] = (init || 0);
 
-				// console.log(Values[i]['Initial'])
+				Values[i]['Step%'] = Values[i]['Step%'] || 0.1;
 
-				Values[i]['step%'] = Values[i]["step%"] || 0.1;
-
-				var dist = (Values[i]['upperBound'] - Values[i]['lowerBound']);
-				var step = (dist * Values[i]["step%"]);
+				var dist = Values[i]['upperBound'] - Values[i]['lowerBound'];
+				var step = dist * Values[i]['Step%'];
 
 				if (Values[i]['type'] == 'Integer') step = Math.round(step);
-				Values[i]['step'] = Values[i]['step'] || step || 1;
+
+				Values[i]['Step'] = Values[i]['Step'] || (step || 1);
 			}
 			else{
 
@@ -50,7 +56,6 @@ class GradientDecsent{
 			}
 		}
 
-		// console.log(Values);
 		return Values;
 	}
 
@@ -65,7 +70,6 @@ class GradientDecsent{
 		this.tried.push({values: this.onValues, value: this.lastValue});
 
 		while(!this.endConditionMet()){
-			// console.log(this.onInteration);
 			this.onValues = this.NextPoint();
 
 			this.lastValue = this.ValueFunction(this.onValues);
@@ -74,7 +78,7 @@ class GradientDecsent{
 			this.onInteration++;
 		}
 
-		return this.getSmallest();
+		return this.findSmallest();
 	}
 
 	endConditionMet(){
@@ -84,36 +88,48 @@ class GradientDecsent{
 	}
 
 	NextPoint(){
-		var valueCpy = this.onValues;
-
+		var currValue;
 		//Not enough for a gradient so twittle values
-		if(this.tried.length <= this.Values.length){
+		if(this.scanArea != 0){
 
-			//Find lowest value element in list
-			valueCpy = this.getSmallest()['values'];
+			currValue = this.findSmallest(this.Values.length - this.scanArea)['values'];
+
+			currValue[this.tried.length - 1] += this.Values[this.tried.length - 1].Step;
+
+			this.gradient[this.Values.length - this.scanArea] = currValue[this.tried.length - 1].value
+
+			this.scanArea--;
+
+			if(this.scanArea == 0){
+				//calculate a new gradient
 
 
-			//from smallest twiddle a value to start gradient search
-			valueCpy[this.tried.length - 1] += this.Values[this.tried.length - 1].step
+			}
+		}
+		else if(this.tried[this.tried.length - 1] > this.tried[this.tried.length - 2]){
+			this.scanArea = this.Values.length;
+			this.calculatedGradient = false;
 		}
 		else{
-			//otherwise shift value with gradient
-			//use most recent value mostly and slowly phase out previous values
+			//go in gradient direction
+			currValue = this.tried[this.tried.length - 1]['values'] + this.gradient * this.alpha;
+
 
 		}
 
-		//place holder
-		return valueCpy;
+		return currValue;
 	}
 
-	getSmallest(){
-		var index = 0;
+	findSmallest(ofLast){
+		ofLast = ofLast || this.tried.length;
 
+		var index = this.tried.length - 1;
 		var smallest = this.tried[index];
-		
-		for (var i = 1; i < this.tried.length; i++){
-			if (this.tried[i]['value'] < smallest['value'])
-				smallest = this.tried[i];
+
+		for(index--; index >= (this.tried.length - ofLast); index--){
+			if(smallest.value > this.tried[index].value){
+				smallest = this.tried[index];
+			}
 		}
 
 		return smallest;
