@@ -1,4 +1,5 @@
 "use strict";
+var math = require('mathjs');
 
 class GradientDecsent{
 	constructor(ValueFunction, Values, options){
@@ -139,7 +140,7 @@ class GradientDecsent{
 			this.gradient = undefined;
 			this.twittleFor = this.Values.length - 1;
 
-			
+
 
 			currValue = this.tried[this.tried.length - 1].values;
 
