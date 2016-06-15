@@ -86,6 +86,42 @@ class GradientDecsent{
 		return true;
 	}
 
+
+	NextPointDumbSearch(){
+
+		//if bad gadient begin twittle 
+		if(this.lastValue > this.tried[this.lastEffective]){
+			this.gradient = null;
+		}
+
+		if(!this.gradient){
+
+			if(this.twittle == this.Values.length){
+				//find and return gadient
+				
+				return;
+			}
+
+			//if no graident find gradient with twittle
+
+			this.tried[this.lastEffective][this.twittle] + this.Values[Step];
+
+			this.twittle++;
+
+			//return twittled value
+			return;
+		}
+		else{
+			
+			var output = this.clampValues(this.addGradient(this.tried[this.lastEffective].values));
+
+			// this.lastEffective = output;
+
+			return output;
+		}
+	}
+
+	//used potentially intelligent gradient searches
 	NextPoint(){
 		var currValue;
 		//Not enough points for a gradient so twittle values
