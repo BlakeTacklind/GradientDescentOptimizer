@@ -25,15 +25,16 @@ var Values = [
 
 var Tested = 0;
 
-LearningRate = 0.001;
+LearningRate = 0.0001;
 
 //Should end be defined by a number of iterations?
 iterations = 1000;
 
 var g = new gd(ValueFunction, Values, {iterations, LearningRate});
 
-console.log(g.optimize(), Tested);
-
+var number = g.optimize();
+console.log(g.tried)
+console.log(number, Tested);
 
 
 //Should there be an ending fucntions?

@@ -1,5 +1,5 @@
 "use strict";
-var math = require('mathjs');
+// var math = require('mathjs');
 
 class GradientDecsent{
 	constructor(ValueFunction, Values, options){
@@ -17,9 +17,13 @@ class GradientDecsent{
 
 		this.scanArea = this.Values.length;
 
+		this.lastEffective = 0;
+		this.prevEffective = 0;
+		this.twittle = 0;
+
 		//initialize gradient
 		this.gradient = undefined;
-		
+
 		this.calculatedGradient = false;
 
 	}
@@ -40,13 +44,14 @@ class GradientDecsent{
 				if (Values[i]['type'] == 'Integer') init = Math.round(init);
 				if(typeof(Values[i]['Initial']) !== 'number') Values[i]['Initial'] = (init || 0);
 
-				Values[i]['Step%'] = Values[i]['Step%'] || 0.1;
+				Values[i]['Step%'] = Values[i]['Step%'] || 0.01;
 
 				var dist = Values[i]['upperBound'] - Values[i]['lowerBound'];
 				var step = dist * Values[i]['Step%'];
 
 				if (Values[i]['type'] == 'Integer') step = Math.round(step);
 
+				//sets given step value, or with provided % value, or 1 (if others 0)
 				Values[i]['Step'] = Values[i]['Step'] || (step || 1);
 			}
 			else{
@@ -69,7 +74,8 @@ class GradientDecsent{
 		this.tried.push({values: this.onValues, value: this.lastValue});
 
 		while(!this.endConditionMet()){
-			this.onValues = this.NextPoint();
+			this.onValues = this.NextPointDumbSearch();
+			// console.log(this.onValues);
 
 			this.lastValue = this.ValueFunction(this.onValues);
 			this.tried.push({values: this.onValues, value: this.lastValue});
@@ -90,35 +96,89 @@ class GradientDecsent{
 	NextPointDumbSearch(){
 
 		//if bad gadient begin twittle 
-		if(this.lastValue > this.tried[this.lastEffective]){
-			this.gradient = null;
+		// console.log(this.lastValue, this.tried[this.lastEffective + 1].value)
+		if(this.gradient && this.tried[this.prevEffective].value < this.tried[this.lastEffective].value){
+			this.gradient = undefined;
+			// console.log("test")
+			// this.twittle = 0;
 		}
 
-		if(!this.gradient){
+		if(this.twittle == this.Values.length){
+			//find gadient
+			this.twittle = 0;
+			var Delta = [];
 
-			if(this.twittle == this.Values.length){
-				//find and return gadient
-				
-				return;
+			for (var i = 0; i < this.Values.length; i++){
+				Delta.push(this.tried[this.lastEffective].value - this.tried[i+1].value);
 			}
 
+			var max = Delta.reduce((prev, curr)=>{
+				if (Math.abs(prev) > Math.abs(curr))
+					return prev;
+				
+				return curr;
+			});
+
+			var fgradient = Delta.map((val, index)=>{
+				var delta = val / Math.abs(max) * this.Values[index].Step;
+
+				// if (this.Values[index].type == "Integer")
+				// 	return Math.round(delta);
+				
+				return delta;
+			});
+
+			this.gradient = fgradient.map((val, index)=>{
+
+				if (this.Values[index].type == "Integer")
+					return Math.round(val);
+				
+				return val;
+			});
+
+			if(this.gradient.every((val)=>{return val == 0;})){
+				var maxI = -1;
+				fgradient.reduce((prev, curr, index)=>{
+					if(prev < Math.abs(curr)){
+						maxI = index;
+						return Math.abs(curr);
+					}
+
+					return curr;
+				}, 0);
+
+				if(maxI != -1){
+					this.gradient[maxI] = 1;
+				}
+				else{
+					console.log("Zeros?!!?")
+				}
+			}
+
+			return this.clampValues(this.addGradient(this.tried[this.lastEffective].values));
+		}
+		else if(!this.gradient){
 			//if no graident find gradient with twittle
 
-			this.tried[this.lastEffective][this.twittle] + this.Values[Step];
+			var next = this.tried[this.lastEffective].values.slice();
+
+			next[this.twittle] += this.Values[this.twittle].Step;
 
 			this.twittle++;
 
+			// console.log(this.tried[this.lastEffective], this.lastEffective);
+
 			//return twittled value
-			return;
+			return next;
 		}
-		else{
-			
-			var output = this.clampValues(this.addGradient(this.tried[this.lastEffective].values));
 
-			// this.lastEffective = output;
+		var output = this.clampValues(this.addGradient(this.tried[this.lastEffective].values));
 
-			return output;
-		}
+		this.prevEffective = this.lastEffective;
+		this.lastEffective = this.onInteration;
+
+		return output;
+		
 	}
 
 	//used potentially intelligent gradient searches
@@ -172,15 +232,11 @@ class GradientDecsent{
 		}
 		//need to find a new gradient (hit an upslope)
 		else if(this.tried[this.tried.length - 1].value > this.tried[this.tried.length - 2].value){
-			console.log(this.tried[this.tried.length - 1]);
+			// console.log(this.tried[this.tried.length - 1]);
 			this.gradient = undefined;
 			this.twittleFor = this.Values.length - 1;
 
-
-
 			currValue = this.tried[this.tried.length - 1].values;
-
-
 		}
 		//we have a feasable gradient
 		else{
