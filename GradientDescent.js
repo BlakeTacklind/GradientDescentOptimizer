@@ -44,7 +44,7 @@ class GradientDecsent{
 				if (Values[i]['type'] == 'Integer') init = Math.round(init);
 				if(typeof(Values[i]['Initial']) !== 'number') Values[i]['Initial'] = (init || 0);
 
-				Values[i]['Step%'] = Values[i]['Step%'] || 0.01;
+				Values[i]['Step%'] = Values[i]['Step%'] || 0.001;
 
 				var dist = Values[i]['upperBound'] - Values[i]['lowerBound'];
 				var step = dist * Values[i]['Step%'];
@@ -78,7 +78,7 @@ class GradientDecsent{
 			// console.log(this.onValues);
 
 			this.lastValue = this.ValueFunction(this.onValues);
-			this.tried.push({values: this.onValues, value: this.lastValue});
+			this.tried.push({values: this.onValues, value: this.lastValue, gradient: this.gradient});
 
 			this.onInteration++;
 		}
@@ -148,7 +148,10 @@ class GradientDecsent{
 				}, 0);
 
 				if(maxI != -1){
-					this.gradient[maxI] = 1;
+					if(this.gradient[maxI] > 0)
+						this.gradient[maxI] = 1;
+					else
+						this.gradient[maxI] = -1;
 				}
 				else{
 					console.log("Zeros?!!?")

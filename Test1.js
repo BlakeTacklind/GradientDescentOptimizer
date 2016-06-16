@@ -28,7 +28,7 @@ var Tested = 0;
 LearningRate = 0.0001;
 
 //Should end be defined by a number of iterations?
-iterations = 1000;
+iterations = 200;
 
 var g = new gd(ValueFunction, Values, {iterations, LearningRate});
 
