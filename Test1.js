@@ -28,12 +28,12 @@ var Tested = 0;
 LearningRate = 0.0001;
 
 //Should end be defined by a number of iterations?
-iterations = 200;
+iterations = 1000;
 
 var g = new gd(ValueFunction, Values, {iterations, LearningRate});
 
 var number = g.optimize();
-console.log(g.tried)
+// console.log(g.tried)
 console.log(number, Tested);
 
 

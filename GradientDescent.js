@@ -109,7 +109,7 @@ class GradientDecsent{
 			var Delta = [];
 
 			for (var i = 0; i < this.Values.length; i++){
-				Delta.push(this.tried[this.lastEffective].value - this.tried[i+1].value);
+				Delta.push(this.tried[this.lastEffective].value - this.tried[i+this.lastEffective+1].value);
 			}
 
 			var max = Delta.reduce((prev, curr)=>{
@@ -118,6 +118,8 @@ class GradientDecsent{
 				
 				return curr;
 			});
+
+			// console.log("deltas ", Delta)
 
 			var fgradient = Delta.map((val, index)=>{
 				var delta = val / Math.abs(max) * this.Values[index].Step;
@@ -147,6 +149,8 @@ class GradientDecsent{
 					return curr;
 				}, 0);
 
+				console.log(maxI)
+
 				if(maxI != -1){
 					if(this.gradient[maxI] > 0)
 						this.gradient[maxI] = 1;
@@ -154,11 +158,11 @@ class GradientDecsent{
 						this.gradient[maxI] = -1;
 				}
 				else{
-					console.log("Zeros?!!?")
+					console.log("ERROR: got a zero gradient");
 				}
 			}
 
-			return this.clampValues(this.addGradient(this.tried[this.lastEffective].values));
+			// return this.clampValues(this.addGradient(this.tried[this.lastEffective].values));
 		}
 		else if(!this.gradient){
 			//if no graident find gradient with twittle
